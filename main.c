@@ -25,40 +25,34 @@
  */
 int main(int argc, char** argv) {
 
-    int rc  = llamar_servicio_get();
-    rc      = llamar_servicio_post();
+    char *proxyHost = NULL;
+    
+    if (argc == 2)
+    {
+        printf("Se ha introducido el proxy %s", argv[1]);
+        proxyHost = argv[1];
+    }
+    
+    int rc  = llamar_servicio_get(proxyHost);
+    rc      = llamar_servicio_post(proxyHost);
+    
+    
     
     return (EXIT_SUCCESS);
 }
 
-int llamar_servicio_get()
+int llamar_servicio_get(char *proxyHost)
 {
     struct value        resJSON;
     struct soap         *soap           = soap_new();
-    char                proxyHost[100]  = "madpx3109.accenture.com";
-    char                logfile[100]    = "";
     
     soap_register_plugin(soap, http_get);
     
-    soap->proxy_host = proxyHost;
-    printf("Proxy: %s\n", soap->proxy_host);
-    
+    if (proxyHost && strlen(proxyHost) > 0) soap->proxy_host = proxyHost;
+        
     printf("Ejemplo de llamada get recuperando JSON\n");
     printf("---------------------------------------\n");
     
-    // generacion de los ficheros log
-    //strcpy(logfile, "poc_get_");
-    //strcat(logfile, "_test");
-    //soap_set_test_logfile(soap, logfile);
-   
-    //strcpy(logfile, ".\poc_get_");
-    //strcat(logfile, "_sent");
-    //soap_set_sent_logfile(soap, logfile);
-   
-    //strcpy(logfile, ".\poc_get_");
-    //strcat(logfile, "_recv");
-    //soap_set_recv_logfile(soap, logfile);
-        
     if (soap_get_connect(soap, "http://jsonplaceholder.typicode.com/posts/1", NULL))
     { 
         soap_print_fault(soap, stderr);
@@ -124,36 +118,20 @@ int llamar_servicio_get()
     return 0;
 }
 
-int llamar_servicio_post()
+int llamar_servicio_post(char *proxyHost)
 {
     struct value        resJSON;
     struct soap         *soap           = soap_new();
-    char                proxyHost[100]  = "madpx3109.accenture.com";
-    char                logfile[100]    = "";
     struct value        jsonRequest;
     struct _struct      estructuraPoC;
     struct value        title, body, userId;
     struct member       miembrosPoC[3];
     
-    soap->proxy_host = proxyHost;
-    printf("Proxy: %s\n", soap->proxy_host);
+    if (proxyHost && strlen(proxyHost) > 0) soap->proxy_host = proxyHost;
     
     printf("Ejemplo de llamada get recuperando JSON\n");
     printf("---------------------------------------\n");
     
-    // generacion de los ficheros log
-    //strcpy(logfile, "poc_get_");
-    //strcat(logfile, "_test");
-    //soap_set_test_logfile(soap, logfile);
-   
-    //strcpy(logfile, ".\poc_get_");
-    //strcat(logfile, "_sent");
-    //soap_set_sent_logfile(soap, logfile);
-   
-    //strcpy(logfile, ".\poc_get_");
-    //strcat(logfile, "_recv");
-    //soap_set_recv_logfile(soap, logfile);
-        
     if (soap_post_connect(soap, "http://jsonplaceholder.typicode.com/posts", NULL, "application/json"))
     { 
         soap_print_fault(soap, stderr);
